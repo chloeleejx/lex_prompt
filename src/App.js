@@ -110,41 +110,11 @@ const LEGISLATION_DB = {
       { name: "Misuse of Drugs Act 1973 (Cap. 185)", abbr: "MDA", desc: "Governs the possession, trafficking, manufacture, and import/export of controlled drugs in Singapore. Prescribes severe mandatory minimum sentences including the death penalty for drug trafficking above specified quantities. Includes presumptions of trafficking from quantities possessed." },
     ],
   },
-  "Company & Commercial Law": {
-    icon: "🏢",
-    desc: "Laws governing corporate entities, directors' duties, insolvency, and commercial transactions.",
-    items: [
-      { name: "Companies Act 1967 (Cap. 50)", abbr: "CA", desc: "The primary legislation governing the incorporation, management, and winding up of companies in Singapore. Covers the duties of directors and officers, shareholders' rights, corporate governance, accounts and auditing, and the procedures for mergers, amalgamations, and insolvency." },
-      { name: "Insolvency, Restructuring and Dissolution Act 2018 (Cap. 142A)", abbr: "IRDA", desc: "Consolidates Singapore's personal and corporate insolvency laws. Governs bankruptcy of individuals, judicial management, schemes of arrangement, receivership, and liquidation of companies. Introduces new restructuring tools modelled on US Chapter 11 to support corporate rescue." },
-      { name: "Securities and Futures Act 2001 (Cap. 289)", abbr: "SFA", desc: "Regulates the securities and futures markets in Singapore. Governs the licensing of market operators and intermediaries, disclosure obligations for listed companies, rules on market conduct (including insider trading and market manipulation), and the regulatory powers of the Monetary Authority of Singapore." },
-      { name: "Partnership Act 1890 (Cap. 391)", abbr: "PA", desc: "Governs the formation, rights, duties, and dissolution of general partnerships in Singapore. Sets out implied terms of a partnership agreement, partners' liability for the firm's debts, and rules on the relationship between partners and third parties." },
-    ],
-  },
 };
 
 const SAMPLE_PROMPTS = [
   {
     id: 1,
-    title: "Negligence Analysis — Singapore Tort Law",
-    category: "Tort Law",
-    author: "L. Tan",
-    likes: 47,
-    tags: ["Negligence", "Singapore", "Duty of Care"],
-    prompt:
-      "You are a Singapore litigation solicitor. Under Singapore tort law, applying the Spandeck two-stage test from Spandeck Engineering v DSTA [2007] 4 SLR(R) 100, analyse whether a duty of care exists between [PARTY A] and [PARTY B] given the following facts: [INSERT FACTS]. Provide a structured legal memo with (1) applicable legal test, (2) application to facts, and (3) conclusion on likelihood of duty being established.",
-  },
-  {
-    id: 2,
-    title: "Contract Termination — Repudiatory Breach",
-    category: "Contract Law",
-    author: "R. Mehta",
-    likes: 31,
-    tags: ["Contract", "Breach", "Termination"],
-    prompt:
-      "Acting as in-house counsel, advise on whether [PARTY]'s conduct constitutes a repudiatory breach of contract under English law. Reference the test in Photo Production Ltd v Securicor Transport Ltd [1980] AC 827. The contract clause at issue is: [INSERT CLAUSE]. Facts: [INSERT FACTS]. Output a concise risk memo identifying: (1) breach type, (2) innocent party's options, (3) risks of affirmation vs acceptance.",
-  },
-  {
-    id: 3,
     title: "Employment Dismissal — Procedural Fairness",
     category: "Employment Law",
     author: "A. Okonkwo",
@@ -628,7 +598,7 @@ export default function App() {
             <section style={{ padding: "60px 0 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
               <div>
                 <h2 className="section-title">Prompt Library</h2>
-                <p className="section-sub">Community-contributed prompts, reviewed and approved by our team.</p>
+                <p className="section-sub">Community-contributed prompts</p>
               </div>
               <button className="btn-gold" onClick={() => setShowSubmitModal(true)}>+ Submit a Prompt</button>
             </section>
@@ -820,3 +790,4 @@ export default function App() {
     </div>
   );
 }
+
