@@ -198,7 +198,6 @@ export default function App() {
   const [submitForm, setSubmitForm] = useState({ title: "", category: "", prompt: "", author: "" });
   const [submitted, setSubmitted] = useState(false);
   const [filterCat, setFilterCat] = useState("All");
-  const [currentSources, setCurrentSources] = useState([]);
 
   const handleLike = (id) => {
     setLikedPrompts((prev) => {
@@ -228,6 +227,7 @@ export default function App() {
   const [isTyping, setIsTyping] = useState(false);
 
   // --- NEW AI FETCH FUNCTION ---
+  const [currentSources, setCurrentSources] = useState([]);
   const handleChatSubmit = async () => {
     if (!chatInput.trim()) return;
 
