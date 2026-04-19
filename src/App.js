@@ -220,6 +220,7 @@ export default function App() {
   const filtered = filterCat === "All" ? SAMPLE_PROMPTS : SAMPLE_PROMPTS.filter((p) => p.category === filterCat);
 
   // --- NEW AI CHAT STATE ---
+  const [currentSources, setCurrentSources] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [chatHistory, setChatHistory] = useState([
     { role: "ai", text: "Hello! I am the LexPrompt AI Tutor. How can I help you understand Singapore Probate Law today?" }
@@ -227,7 +228,6 @@ export default function App() {
   const [isTyping, setIsTyping] = useState(false);
 
   // --- NEW AI FETCH FUNCTION ---
-  const [currentSources, setCurrentSources] = useState([]);
   const handleChatSubmit = async () => {
     if (!chatInput.trim()) return;
 
