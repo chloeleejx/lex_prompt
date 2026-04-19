@@ -11,7 +11,7 @@ const COLORS = {
   ink: "#2D2D44",
 };
 
-const NAV_ITEMS = ["Home", "Structuring a Good Prompt", "Reference Library", "Prompt Library"];
+const NAV_ITEMS = ["Home", "AI Tutor", "Structuring a Good Prompt", "Reference Library", "Prompt Library"];
 
 const REFERENCE_ITEMS = [
   {
@@ -218,6 +218,38 @@ export default function App() {
   const categories = ["All", ...new Set(SAMPLE_PROMPTS.map((p) => p.category))];
   const filtered = filterCat === "All" ? SAMPLE_PROMPTS : SAMPLE_PROMPTS.filter((p) => p.category === filterCat);
 
+  // --- NEW AI CHAT STATE ---
+  const [chatInput, setChatInput] = useState("");
+  const [chatHistory, setChatHistory] = useState([
+    { role: "ai", text: "Hello! I am the LexPrompt AI Tutor. How can I help you understand Singapore Probate Law today?" }
+  ]);
+  const [isTyping, setIsTyping] = useState(false);
+
+  // --- NEW AI FETCH FUNCTION ---
+  const handleChatSubmit = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMessage = chatInput;
+    setChatHistory((prev) => [...prev, { role: "user", text: userMessage }]);
+    setChatInput("");
+    setIsTyping(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage })
+      });
+      const data = await response.json();
+      
+      setChatHistory((prev) => [...prev, { role: "ai", text: data.answer || "I'm sorry, I encountered an error." }]);
+    } catch (error) {
+      setChatHistory((prev) => [...prev, { role: "ai", text: "Connection error. Please ensure the backend is running." }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   return (
     <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", background: COLORS.cream, minHeight: "100vh", color: COLORS.darkInk }}>
       {/* Google Fonts */}
@@ -282,7 +314,64 @@ export default function App() {
       <div style={{ height: 3, background: `linear-gradient(90deg, ${COLORS.rust}, ${COLORS.gold}, ${COLORS.sage})` }} />
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "0 40px 80px" }}>
+        
+        {/* ── NEW AI TUTOR SECTION ── */}
+        {activeNav === "AI Tutor" && (
+          <section style={{ padding: "60px 0" }}>
+            <h2 className="section-title">AI Probate Tutor</h2>
+            <p className="section-sub" style={{ marginBottom: 32 }}>
+              Ask questions about the Probate and Administration Act. Responses are grounded in the legislation found in our Reference Library.
+            </p>
 
+            <div style={{ 
+              background: "white", 
+              border: `1px solid ${COLORS.goldLight}`, 
+              borderRadius: 8, 
+              display: "flex", 
+              flexDirection: "column", 
+              height: "600px",
+              overflow: "hidden"
+            }}>
+              {/* Chat Messages */}
+              <div style={{ flex: 1, padding: "24px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px", background: COLORS.parchment }}>
+                {chatHistory.map((msg, i) => (
+                  <div key={i} style={{
+                    alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+                    maxWidth: "80%",
+                    padding: "12px 16px",
+                    borderRadius: msg.role === "user" ? "12px 12px 0 12px" : "12px 12px 12px 0",
+                    background: msg.role === "user" ? COLORS.darkInk : "white",
+                    color: msg.role === "user" ? COLORS.cream : COLORS.darkInk,
+                    fontFamily: "'Source Serif 4', serif",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                    border: msg.role === "ai" ? `1px solid ${COLORS.goldLight}` : "none"
+                  }}>
+                    {msg.text}
+                  </div>
+                ))}
+                {isTyping && <div style={{ color: COLORS.gold, fontSize: "12px", fontFamily: "'Source Serif 4', serif" }}>LexPrompt is thinking...</div>}
+              </div>
+
+              {/* Chat Input */}
+              <div style={{ padding: "20px", background: "white", borderTop: `1px solid ${COLORS.goldLight}`, display: "flex", gap: "12px" }}>
+                <input 
+                  type="text" 
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
+                  placeholder="Ask a legal question... (e.g., Who can apply for probate?)"
+                  style={{ marginTop: 0 }}
+                />
+                <button className="btn-gold" onClick={handleChatSubmit} disabled={isTyping}>
+                  {isTyping ? "..." : "Send"}
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
+      
         {/* ── HOME ── */}
         {activeNav === "Home" && (
           <>
