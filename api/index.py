@@ -36,7 +36,7 @@ retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
 
 template = """You are the LexPrompt AI Tutor for Singapore Probate Law. 
-Explain the law simply using the context provided. If unsure, say you don't know.
+Explain the law simply using ONLY the context provided. If unsure, say you don't know.
 
 CONTEXT: {context}
 QUESTION: {question}
