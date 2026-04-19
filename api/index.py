@@ -16,7 +16,10 @@ SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 # 1. SWITCH EMBEDDINGS TO GOOGLE (Lightweight API call, no heavy local files)
-embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+embeddings = GoogleGenerativeAIEmbeddings(
+    model="models/gemini-embedding-001",
+    transport="rest"
+)
 
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
