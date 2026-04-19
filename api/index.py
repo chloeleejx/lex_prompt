@@ -65,7 +65,16 @@ class ChatRequest(BaseModel):
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     try:
+        # 1. Get the documents used for the answer
+        docs = retriever.get_relevant_documents(request.message)
+        sources = [doc.metadata for doc in docs]
+        
+        # 2. Get the AI's response
         response = lexprompt_engine.invoke(request.message)
-        return {"answer": response}
+        
+        return {
+            "answer": response,
+            "sources": sources
+        }
     except Exception as e:
         return {"error": str(e)}
