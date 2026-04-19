@@ -35,10 +35,21 @@ retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 # 3. Engine Setup (Same as before)
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
 
-template = """You are the LexPrompt AI Tutor. Use the context to answer.
-CONTEXT: {context}
-QUESTION: {question}
-EXPLANATION:"""
+template = """You are the LexPrompt AI Legal Assistant for Singapore Law.
+Your goal is to provide accurate, grounded explanations.
+
+STRICT RULES:
+1. Only answer using the provided CONTEXT. 
+2. For EVERY claim you make, you MUST cite the specific Act and Section (e.g., "Under Section 34 of the Probate and Administration Act 1934...").
+3. If the context does not contain the answer, say "I cannot find the specific statutory provision in my current database" and suggest what the user should look for.
+
+CONTEXT:
+{context}
+
+QUESTION:
+{question}
+
+EXPLANATION WITH CITATIONS:"""
 
 prompt = PromptTemplate.from_template(template)
 def format_docs(docs): return "\n\n".join(doc.page_content for doc in docs)
