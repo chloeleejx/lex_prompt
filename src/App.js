@@ -180,8 +180,6 @@ const CTFR = [
   },
 ];
 
-const [currentSources, setCurrentSources] = useState([]);
-
 export default function App() {
   const [activeNav, setActiveNav] = useState("Home");
   const [refView, setRefView] = useState("overview"); // "overview" | "legislation"
@@ -200,6 +198,7 @@ export default function App() {
   const [submitForm, setSubmitForm] = useState({ title: "", category: "", prompt: "", author: "" });
   const [submitted, setSubmitted] = useState(false);
   const [filterCat, setFilterCat] = useState("All");
+  const [currentSources, setCurrentSources] = useState([]);
 
   const handleLike = (id) => {
     setLikedPrompts((prev) => {
