@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from 'react-markdown';
 
 const COLORS = {
   cream: "#F5F0E8",
@@ -286,6 +287,11 @@ export default function App() {
         .filter-btn { background: none; border: 1px solid ${COLORS.goldLight}; padding: 6px 16px; font-family: 'Source Serif 4', serif; font-size: 13px; cursor: pointer; border-radius: 20px; transition: all 0.2s; color: ${COLORS.ink}; }
         .filter-btn.active { background: ${COLORS.gold}; border-color: ${COLORS.gold}; color: white; }
         .filter-btn:hover { border-color: ${COLORS.gold}; color: ${COLORS.gold}; }
+        .prose-chat h1, .prose-chat h2, .prose-chat h3 { font-family: 'Playfair Display', serif; margin-top: 16px; margin-bottom: 8px; color: ${COLORS.darkInk}; font-size: 1.1rem; border-bottom: 1px solid ${COLORS.goldLight}; }
+        .prose-chat p { margin-bottom: 12px; }
+        .prose-chat ul, .prose-chat ol { padding-left: 20px; margin-bottom: 12px; }
+        .prose-chat li { margin-bottom: 6px; }
+        .prose-chat strong { color: ${COLORS.rust}; font-weight: 600; }
       `}</style>
 
       {/* Header */}
@@ -335,7 +341,7 @@ export default function App() {
               {/* Chat Messages */}
               <div style={{ flex: 1, padding: "24px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px", background: COLORS.parchment }}>
                 {chatHistory.map((msg, i) => (
-                  <div key={i} style={{
+                  <div key={i} className="prose-chat" style={{
                     alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
                     maxWidth: "80%",
                     padding: "12px 16px",
@@ -348,7 +354,7 @@ export default function App() {
                     boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
                     border: msg.role === "ai" ? `1px solid ${COLORS.goldLight}` : "none"
                   }}>
-                    {msg.text}
+                    {msg.role === "ai" ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
                   </div>
                 ))}
                 {isTyping && <div style={{ color: COLORS.gold, fontSize: "12px", fontFamily: "'Source Serif 4', serif" }}>LexPrompt is thinking...</div>}
