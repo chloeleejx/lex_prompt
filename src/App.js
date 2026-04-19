@@ -180,6 +180,8 @@ const CTFR = [
   },
 ];
 
+const [currentSources, setCurrentSources] = useState([]);
+
 export default function App() {
   const [activeNav, setActiveNav] = useState("Home");
   const [refView, setRefView] = useState("overview"); // "overview" | "legislation"
@@ -244,6 +246,7 @@ export default function App() {
       const data = await response.json();
       
       setChatHistory((prev) => [...prev, { role: "ai", text: data.answer || "I'm sorry, I encountered an error." }]);
+      setCurrentSources(data.sources || []);
     } catch (error) {
       setChatHistory((prev) => [...prev, { role: "ai", text: "Connection error. Please ensure the backend is running." }]);
     } finally {
@@ -324,60 +327,66 @@ export default function App() {
         {/* ── NEW AI TUTOR SECTION ── */}
         {activeNav === "AI Tutor" && (
           <section style={{ padding: "60px 0" }}>
-            <h2 className="section-title">AI Probate Tutor</h2>
+            <h2 className="section-title">AI Tutor</h2>
             <p className="section-sub" style={{ marginBottom: 32 }}>
               Ask questions about the Probate and Administration Act. Responses are grounded in the legislation found in our Reference Library.
             </p>
 
-            <div style={{ 
-              background: "white", 
-              border: `1px solid ${COLORS.goldLight}`, 
-              borderRadius: 8, 
-              display: "flex", 
-              flexDirection: "column", 
-              height: "600px",
-              overflow: "hidden"
-            }}>
-              {/* Chat Messages */}
-              <div style={{ flex: 1, padding: "24px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px", background: COLORS.parchment }}>
-                {chatHistory.map((msg, i) => (
-                  <div key={i} className="prose-chat" style={{
-                    alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                    maxWidth: "80%",
-                    padding: "12px 16px",
-                    borderRadius: msg.role === "user" ? "12px 12px 0 12px" : "12px 12px 12px 0",
-                    background: msg.role === "user" ? COLORS.darkInk : "white",
-                    color: msg.role === "user" ? COLORS.cream : COLORS.darkInk,
-                    fontFamily: "'Source Serif 4', serif",
-                    fontSize: "14px",
-                    lineHeight: "1.6",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-                    border: msg.role === "ai" ? `1px solid ${COLORS.goldLight}` : "none"
-                  }}>
-                    {msg.role === "ai" ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
-                  </div>
-                ))}
-                {isTyping && <div style={{ color: COLORS.gold, fontSize: "12px", fontFamily: "'Source Serif 4', serif" }}>LexPrompt is thinking...</div>}
+            <div style={{ display: "flex", gap: "24px", height: "650px", alignItems: "stretch" }}>
+      
+              {/* --- LEFT: CHAT INTERFACE (70%) --- */}
+              <div style={{ flex: 7, display: "flex", flexDirection: "column", background: "white", border: `1px solid ${COLORS.goldLight}`, borderRadius: 8, overflow: "hidden" }}>
+                <div style={{ flex: 1, padding: "24px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "16px", background: COLORS.parchment }}>
+                  {chatHistory.map((msg, i) => (
+                    <div key={i} className="prose-chat" style={{
+                      alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+                      maxWidth: "85%",
+                      padding: "12px 16px",
+                      borderRadius: msg.role === "user" ? "12px 12px 0 12px" : "12px 12px 12px 0",
+                      background: msg.role === "user" ? COLORS.darkInk : "white",
+                      color: msg.role === "user" ? COLORS.cream : COLORS.darkInk,
+                      fontSize: "14px",
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+                      border: msg.role === "ai" ? `1px solid ${COLORS.goldLight}` : "none"
+                    }}>
+                      {msg.role === "ai" ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
+                    </div>
+                  ))}
+                  {isTyping && <div style={{ color: COLORS.gold, fontSize: "12px" }}>LexPrompt is verifying statutes...</div>}
+                </div>
+                <div style={{ padding: "20px", background: "white", borderTop: `1px solid ${COLORS.goldLight}`, display: "flex", gap: "12px" }}>
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()} placeholder="Ask a question..." style={{marginTop: 0}} />
+                  <button className="btn-gold" onClick={handleChatSubmit} disabled={isTyping}>Send</button>
+                </div>
               </div>
-
-              {/* Chat Input */}
-              <div style={{ padding: "20px", background: "white", borderTop: `1px solid ${COLORS.goldLight}`, display: "flex", gap: "12px" }}>
-                <input 
-                  type="text" 
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
-                  placeholder="Ask a legal question... (e.g., Who can apply for probate?)"
-                  style={{ marginTop: 0 }}
-                />
-                <button className="btn-gold" onClick={handleChatSubmit} disabled={isTyping}>
-                  {isTyping ? "..." : "Send"}
-                </button>
+        
+              {/* --- RIGHT: SOURCE SIDEBAR (30%) --- */}
+              <div style={{ flex: 3, background: COLORS.cream, border: `1px solid ${COLORS.goldLight}`, borderRadius: 8, padding: "20px", overflowY: "auto", display: "flex", flexDirection: "column" }}>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "16px", fontWeight: 700, marginBottom: "16px", color: COLORS.darkInk, borderBottom: `2px solid ${COLORS.gold}`, paddingBottom: "8px" }}>
+                  Statutory Sources
+                </h3>
+                {currentSources.length > 0 ? (
+                  currentSources.map((src, i) => (
+                    <div key={i} style={{ background: "white", padding: "12px", borderRadius: "4px", marginBottom: "12px", borderLeft: `4px solid ${COLORS.gold}`, boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
+                      <p style={{ fontSize: "11px", fontWeight: 700, color: COLORS.rust, marginBottom: "6px", textTransform: "uppercase" }}>
+                        Probate Act • Page {src.page + 1}
+                      </p>
+                      <p style={{ fontSize: "12px", color: "#555", lineHeight: "1.5", fontStyle: "italic" }}>
+                        "{src.content.substring(0, 200)}..."
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ textAlign: "center", color: "#999", marginTop: "40px", fontSize: "13px" }}>
+                    <p>No sources cited yet.</p>
+                    <p style={{fontSize: "11px", marginTop: "8px"}}>References will appear here after the AI responds.</p>
+                  </div>
+                )}
               </div>
             </div>
           </section>
         )}
-      
+
         {/* ── HOME ── */}
         {activeNav === "Home" && (
           <>
