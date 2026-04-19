@@ -2,26 +2,25 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import os
 from supabase import create_client
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import SupabaseVectorStore
-from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 app = FastAPI()
 
-# --- LAYER 1: CONFIGURATION ---
-# In Vercel, use os.environ.get() to keep keys secret!
+# Credentials from Vercel Environment Variables
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
-# --- LAYER 2: CONNECTION (No re-uploading here) ---
-embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+# 1. SWITCH EMBEDDINGS TO GOOGLE (Lightweight API call, no heavy local files)
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# We just "point" to the existing table you already filled in Colab
+# 2. Point to the Store
 vector_store = SupabaseVectorStore(
     client=supabase_client,
     embedding=embeddings,
@@ -30,33 +29,22 @@ vector_store = SupabaseVectorStore(
 )
 retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 
-# --- LAYER 3: ENGINE ---
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash", 
-    temperature=0.1, 
-    transport="rest"
-)
+# 3. Engine Setup (Same as before)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
 
-template = """You are the LexPrompt AI Tutor for Singapore Probate Law. 
-Explain the law simply using the context provided.
-
+template = """You are the LexPrompt AI Tutor. Use the context to answer.
 CONTEXT: {context}
 QUESTION: {question}
 EXPLANATION:"""
 
 prompt = PromptTemplate.from_template(template)
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+def format_docs(docs): return "\n\n".join(doc.page_content for doc in docs)
 
 lexprompt_engine = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt
-    | llm
-    | StrOutputParser()
+    | prompt | llm | StrOutputParser()
 )
 
-# --- LAYER 4: API ENDPOINT ---
 class ChatRequest(BaseModel):
     message: str
 
