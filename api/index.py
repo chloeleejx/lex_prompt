@@ -33,7 +33,7 @@ vector_store = SupabaseVectorStore(
 retriever = vector_store.as_retriever(search_kwargs={"k": 6})
 
 # 3. Engine Setup (Same as before)
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
+llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", transport="rest")
 
 template = """You are the LexPrompt AI Tutor for Singapore Law. 
 Your ONLY source of truth is the provided CONTEXT.
