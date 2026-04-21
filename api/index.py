@@ -52,7 +52,7 @@ async def chat(request: ChatRequest):
         )
 
         template = """You are the LexPrompt AI Tutor for Singapore Law. 
-        Your ONLY source of truth is the provided CONTEXT.
+        Explain the law simply using the provided CONTEXT.
 
         STRICT RULES:
         1. Base your answer EXCLUSIVELY on the provided CONTEXT.
