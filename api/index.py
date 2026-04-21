@@ -30,10 +30,10 @@ vector_store = SupabaseVectorStore(
     table_name="legal_documents",
     query_name="match_documents"
 )
-retriever = vector_store.as_retriever(search_kwargs={"k": 10})
+retriever = vector_store.as_retriever(search_kwargs={"k": 5})
 
 # 3. Engine Setup (Same as before)
-llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview", transport="rest")
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", transport="rest")
 
 template = """You are the LexPrompt AI Tutor for Singapore Law. 
 Your ONLY source of truth is the provided CONTEXT.
