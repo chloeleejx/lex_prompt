@@ -1,6 +1,6 @@
 fastapi
 pydantic
-supabase
+supabase==2.4.5
 langchain-google-genai
 langchain-community
 pypdf
