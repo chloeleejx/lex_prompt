@@ -30,7 +30,7 @@ vector_store = SupabaseVectorStore(
     table_name="legal_documents",
     query_name="match_documents"
 )
-retriever = vector_store.as_retriever(search_kwargs={"k": 5})
+retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
 # 3. Engine Setup (Same as before)
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", transport="rest", google_api_key=os.environ.get("GOOGLE_API_KEY"))
