@@ -37,7 +37,6 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
 
 template = """You are the LexPrompt AI Tutor for Singapore Law. 
 Explain the law simply using the context provided.
-If the information is not in the context, do not mention it.
 
 CONTEXT: {context}
 QUESTION: {question}
