@@ -51,17 +51,17 @@ ANSWER:"""
 prompt = PromptTemplate.from_template(template)
 def format_docs(docs): return "\n\n".join(doc.page_content for doc in docs)
 
-lexprompt_engine = (
-    {"context": retriever | format_docs, "question": RunnablePassthrough()}
-    | prompt | llm | StrOutputParser()
-)
-
 class ChatRequest(BaseModel):
     message: str
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
-    try:
+    try:       
+        lexprompt_engine = (
+            {"context": retriever | format_docs, "question": RunnablePassthrough()}
+            | prompt | llm | StrOutputParser()
+        )
+        
         # 1. Manually get the documents first so we can send them to the UI
         docs = retriever.invoke(request.message)
         
@@ -81,4 +81,9 @@ async def chat(request: ChatRequest):
             "sources": sources
         }
     except Exception as e:
-        return {"error": str(e)}
+        print(f"Detailed Error: {str(e)}")
+
+        if "429" in str(e):
+            return {"answer": "I'm receiving too many requests right now. Please wait 30 seconds and try again!"}
+            
+        return {"answer": "I hit a snag processing that. Could you try rephrasing your question?"}
