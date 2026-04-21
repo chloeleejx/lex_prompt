@@ -326,7 +326,8 @@ export default function App() {
           <section style={{ padding: "60px 0" }}>
             <h2 className="section-title">AI Tutor</h2>
             <p className="section-sub" style={{ marginBottom: 32 }}>
-              Ask questions about the Probate and Administration Act. Responses are grounded in the legislation found in our Reference Library.
+              Ask questions about the Probate and Administration Act 1934 and Intestate Succession Act 1967. 
+              Responses are grounded in the legislation found in our Reference Library.
             </p>
 
             <div style={{ display: "flex", gap: "24px", height: "650px", alignItems: "stretch" }}>
