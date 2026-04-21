@@ -40,11 +40,11 @@ const LEGISLATION_DB = {
     icon: "🏛️",
     desc: "Laws governing the administration of deceased estates, wills, and inheritance in Singapore.",
     items: [
-      { name: "Probate and Administration Act 1934 (Cap. 251)", abbr: "PAA", desc: "The primary statute governing the grant of probate and letters of administration in Singapore. It sets out who may apply, the procedure for obtaining a grant, and the duties of executors and administrators in managing and distributing an estate." },
-      { name: "Succession Act 1967 (Cap. 322)", abbr: "SA", desc: "Governs the distribution of property of an intestate (person who dies without a valid will) among surviving family members. It sets out the statutory shares for spouses, children, and other relatives, and provides rules on how property passes when there is no will." },
-      { name: "Wills Act 1838 (Cap. 352)", abbr: "WA", desc: "Sets out the formal requirements for a valid will in Singapore, including the requirement for the testator to be of sound mind and at least 21 years old, the will to be in writing, signed by the testator, and witnessed by two independent witnesses present at the same time." },
-      { name: "Mental Capacity Act 2008 (Cap. 177A)", abbr: "MCA", desc: "Relevant to probate disputes involving testamentary capacity. Provides a legal framework for assessing whether a person has the mental capacity to make decisions, including executing a will. Establishes the Court of Protection's jurisdiction over persons lacking capacity." },
-      { name: "Family Justice Rules 2014", abbr: "FJR", desc: "Procedural rules governing probate proceedings in the Family Justice Courts. Sets out timelines, forms, and procedures for filing probate applications, caveats, citations, and contentious probate actions in Singapore." },
+      { name: "Probate and Administration Act 1934", abbr: "PAA", desc: "The primary statute governing the grant of probate and letters of administration in Singapore. It sets out who may apply, the procedure for obtaining a grant, and the duties of executors and administrators in managing and distributing an estate." },
+      { name: "Intestate Succession Act 1967", abbr: "ISA", desc: "Governs the distribution of property of an intestate (person who dies without a valid will) among surviving family members. It sets out the statutory shares for spouses, children, and other relatives, and provides rules on how property passes when there is no will." },
+      { name: "Wills Act 1838", abbr: "WA", desc: "Sets out the formal requirements for a valid will in Singapore, including the requirement for the testator to be of sound mind and at least 21 years old, the will to be in writing, signed by the testator, and witnessed by two independent witnesses present at the same time." },
+      { name: "Mental Capacity Act 2008", abbr: "MCA", desc: "Relevant to probate disputes involving testamentary capacity. Provides a legal framework for assessing whether a person has the mental capacity to make decisions, including executing a will. Establishes the Court of Protection's jurisdiction over persons lacking capacity." },
+      { name: "Family Justice (Probate and Other Matters) Rules 2024", abbr: "FJR", desc: "Procedural rules governing probate proceedings in the Family Justice Courts. Sets out timelines, forms, and procedures for filing probate applications, caveats, citations, and contentious probate actions in Singapore." },
     ],
   },
   "Contract Law": {
@@ -669,12 +669,6 @@ export default function App() {
                               <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 700, color: COLORS.darkInk, marginBottom: 10, lineHeight: 1.4 }}>{item.name}</h3>
                               <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 14, color: "#444", lineHeight: 1.8 }}>{item.desc}</p>
                             </div>
-                          </div>
-                          <div style={{ marginTop: 14, background: COLORS.parchment, borderRadius: 4, padding: "10px 14px" }}>
-                            <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: "0.08em", marginBottom: 4 }}>USE IN PROMPT</p>
-                            <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 13, color: COLORS.ink, fontStyle: "italic" }}>
-                              "Referring to the {item.abbr}, specifically [relevant section], advise on…"
-                            </p>
                           </div>
                         </div>
                       ))}
