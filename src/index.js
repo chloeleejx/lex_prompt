@@ -1,4 +1,4 @@
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css"; // Optional, but good to have
