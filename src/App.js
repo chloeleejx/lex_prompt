@@ -352,9 +352,26 @@ export default function App() {
                   ))}
                   {isTyping && <div style={{ color: COLORS.gold, fontSize: "12px" }}>LexPrompt is verifying statutes...</div>}
                 </div>
-                <div style={{ padding: "20px", background: "white", borderTop: `1px solid ${COLORS.goldLight}`, display: "flex", gap: "12px" }}>
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()} placeholder="Ask a question..." style={{marginTop: 0}} />
-                  <button className="btn-gold" onClick={handleChatSubmit} disabled={isTyping}>Send</button>
+
+                {/* --- UPDATED INPUT AREA WITH DISCLAIMER --- */}
+                <div style={{ padding: "20px", background: "white", borderTop: `1px solid ${COLORS.goldLight}` }}>
+                  <div style={{ display: "flex", gap: "12px", marginBottom: "12px" }}>
+                    <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()} placeholder="Ask a question..." style={{marginTop: 0, flex: 1}} />
+                    <button className="btn-gold" onClick={handleChatSubmit} disabled={isTyping}>Send</button>
+                  </div>
+                  
+                  {/* --- THE DISCLAIMER FOOTER --- */}
+                  <p style={{ 
+                    fontSize: "11px", 
+                    color: "#888", 
+                    textAlign: "center", 
+                    margin: 0, 
+                    lineHeight: "1.4",
+                    fontStyle: "italic" 
+                  }}>
+                    <strong>Disclaimer:</strong> LexPrompt is a decision support tool for research and educational purposes. 
+                    It does not constitute legal advice. Verify all responses against the Singapore Statutes Online (SSO).
+                  </p>
                 </div>
               </div>
         
