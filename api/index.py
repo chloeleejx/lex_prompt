@@ -15,75 +15,79 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
-# 1. SWITCH EMBEDDINGS TO GOOGLE (Lightweight API call, no heavy local files)
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/gemini-embedding-001",
-    transport="rest"
-)
-
-supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-# 2. Point to the Store
-vector_store = SupabaseVectorStore(
-    client=supabase_client,
-    embedding=embeddings,
-    table_name="legal_documents",
-    query_name="match_documents"
-)
-retriever = vector_store.as_retriever(search_kwargs={"k": 4})
-
-# 3. Engine Setup (Same as before)
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", transport="rest", google_api_key=os.environ.get("GOOGLE_API_KEY"))
-
-template = """You are the LexPrompt AI Tutor for Singapore Law. 
-Your ONLY source of truth is the provided CONTEXT.
-
-STRICT RULES:
-1. Base your answer EXCLUSIVELY on the provided CONTEXT from the Probate and Administration Act.
-2. Do NOT mention other Acts (like the Intestate Succession Act) unless they appear in the CONTEXT.
-3. If the CONTEXT does not contain the answer, say: "Based on the provided statutory references, I cannot find the specific provision, but here is what the Act says about related matters..." 
-4. Always cite the Section numbers found in the CONTEXT.
-
-CONTEXT: {context}
-QUESTION: {question}
-ANSWER:"""
-
-prompt = PromptTemplate.from_template(template)
-def format_docs(docs): return "\n\n".join(doc.page_content for doc in docs)
-
 class ChatRequest(BaseModel):
     message: str
+
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     try:       
+        # Initialize Embeddings inside the request to ensure fresh connection
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/gemini-embedding-001",
+            transport="rest",
+            google_api_key=GOOGLE_API_KEY
+        )
+
+        supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+        vector_store = SupabaseVectorStore(
+            client=supabase_client,
+            embedding=embeddings,
+            table_name="legal_documents",
+            query_name="match_documents"
+        )
+        
+        # Pull 4 relevant snippets
+        retriever = vector_store.as_retriever(search_kwargs={"k": 4})
+        
+        # Initialize LLM
+        llm = ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash", 
+            transport="rest", 
+            google_api_key=GOOGLE_API_KEY
+        )
+
+        template = """You are the LexPrompt AI Tutor for Singapore Law. 
+        Your ONLY source of truth is the provided CONTEXT.
+
+        STRICT RULES:
+        1. Base your answer EXCLUSIVELY on the provided CONTEXT.
+        2. If the answer is not in the CONTEXT, say: "Based on the provided statutory references, I cannot find the specific provision..."
+        3. Always cite Section numbers found in the CONTEXT.
+        
+        CONTEXT: {context}
+        QUESTION: {question}
+        ANSWER:"""
+
+        prompt = PromptTemplate.from_template(template)
+
+        # Build the engine
         lexprompt_engine = (
             {"context": retriever | format_docs, "question": RunnablePassthrough()}
             | prompt | llm | StrOutputParser()
         )
         
-        # 1. Manually get the documents first so we can send them to the UI
+        # 1. Get docs for the sidebar
         docs = retriever.invoke(request.message)
+        sources = [{"content": d.page_content, "page": d.metadata.get("page", "N/A")} for d in docs]
         
-        # 2. Extract the source content and page numbers
-        sources = []
-        for doc in docs:
-            sources.append({
-                "content": doc.page_content,
-                "page": doc.metadata.get("page", "N/A")
-            })
-        
-        # 3. Get the AI's answer using the same logic
+        # 2. Get AI answer
         answer = lexprompt_engine.invoke(request.message)
         
         return {
             "answer": answer,
             "sources": sources
         }
-    except Exception as e:
-        print(f"Detailed Error: {str(e)}")
 
+    except Exception as e:
+        # This will show up in your Vercel Dashboard Logs
+        print(f"CRITICAL ERROR: {str(e)}")
+        
         if "429" in str(e):
-            return {"answer": "I'm receiving too many requests right now. Please wait 30 seconds and try again!"}
-            
-        return {"answer": "I hit a snag processing that. Could you try rephrasing your question?"}
+            return {"answer": "Quota reached. Please wait 30 seconds."}
+        
+        # Return the actual error to the UI temporarily so you can see it
+        return {"answer": f"Technical snag: {str(e)}"}
