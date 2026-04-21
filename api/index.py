@@ -45,7 +45,7 @@ async def chat(request: ChatRequest):
         
         # Initialize LLM
         llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash", 
+            model="models/gemini-1.5-flash", 
             transport="rest", 
             google_api_key=GOOGLE_API_KEY
         )
