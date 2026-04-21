@@ -36,11 +36,17 @@ retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
 
 template = """You are the LexPrompt AI Tutor for Singapore Law. 
-Explain the law simply using the context provided.
+Your ONLY source of truth is the provided CONTEXT.
+
+STRICT RULES:
+1. Base your answer EXCLUSIVELY on the provided CONTEXT from the Probate and Administration Act.
+2. Do NOT mention other Acts (like the Intestate Succession Act) unless they appear in the CONTEXT.
+3. If the CONTEXT does not contain the answer, say: "Based on the provided statutory references, I cannot find the specific provision, but here is what the Act says about related matters..." 
+4. Always cite the Section numbers found in the CONTEXT.
 
 CONTEXT: {context}
 QUESTION: {question}
-ANSWER WITH CITATIONS:"""
+ANSWER:"""
 
 prompt = PromptTemplate.from_template(template)
 def format_docs(docs): return "\n\n".join(doc.page_content for doc in docs)
