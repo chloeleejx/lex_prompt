@@ -45,9 +45,10 @@ async def chat(request: ChatRequest):
         
         # Initialize LLM
         llm = ChatGoogleGenerativeAI(
-            model="models/gemini-1.5-flash", 
+            model="gemini-2.5-flash-lite", 
             transport="rest", 
-            google_api_key=GOOGLE_API_KEY
+            google_api_key=GOOGLE_API_KEY,
+            model_kwargs={"thinking_budget": 0}
         )
 
         template = """You are the LexPrompt AI Tutor for Singapore Law. 
