@@ -4,6 +4,6 @@ langchain
 langchain-google-genai==3.0.1
 langchain-community
 pypdf
-google-generativeai==0.8.0
+google-generativeai>=0.8.1
 supabase==2.4.6
 gotrue==1.3.1
