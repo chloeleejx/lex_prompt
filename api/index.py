@@ -35,12 +35,13 @@ retriever = vector_store.as_retriever(search_kwargs={"k": 3})
 # 3. Engine Setup (Same as before)
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", transport="rest")
 
-template = """You are the LexPrompt AI Tutor for Singapore Probate Law. 
-Explain the law simply using the context provided. If unsure, say you don't know.
+template = """You are the LexPrompt AI Tutor for Singapore Law. 
+Explain the law simply using the CONTEXT provided.
+If the information is not in the CONTEXT, do not mention it.
 
 CONTEXT: {context}
 QUESTION: {question}
-EXPLANATION WITH CITATIONS:"""
+ANSWER WITH CITATIONS:"""
 
 prompt = PromptTemplate.from_template(template)
 def format_docs(docs): return "\n\n".join(doc.page_content for doc in docs)
